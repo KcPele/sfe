@@ -1,8 +1,9 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import type { User } from '@/types/api'
 import { Avatar, Icon } from '@/components/ui'
-import { getMe } from '@/lib/api/endpoints'
+import { meQuery } from '@/lib/api/queries'
 import styles from './UserMenu.module.css'
 
 const TIER_LABELS: Record<User['tier'], string> = {
@@ -13,11 +14,7 @@ const TIER_LABELS: Record<User['tier'], string> = {
 
 export function UserMenu() {
   const [open, setOpen] = useState(false)
-  const [user, setUser] = useState<User>()
-
-  useEffect(() => {
-    getMe().then((res) => setUser(res.data))
-  }, [])
+  const { data: user } = useQuery(meQuery())
 
   return (
     <div className={styles.menu}>

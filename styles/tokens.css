@@ -3,6 +3,9 @@
  * Component styles should only reference these, never raw values.
  */
 :root {
+  /* The app has no dark theme: keep native controls (select lists, scrollbars) light under a dark OS. */
+  color-scheme: light;
+
   /* Colour */
   --color-bg: #f6f5fa;
   --color-bg-subtle: #fafafc;
