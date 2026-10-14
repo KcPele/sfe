@@ -1,22 +1,14 @@
 'use client'
-import { useEffect, useState } from 'react'
-import type { User } from '@/types/api'
+import { useQuery } from '@tanstack/react-query'
 import { BalanceSummary, RatesWidget, RecentTransactions, WalletCard } from '@/components/dashboard'
-import { getMe } from '@/lib/api/endpoints'
+import { meQuery } from '@/lib/api/queries'
 import styles from './page.module.css'
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<User>()
-  const [isLoading, setIsLoading] = useState(true)
+  // Cached across navigations: returning to the dashboard renders immediately and refreshes in the background.
+  const { data: user, isPending } = useQuery(meQuery())
 
-  useEffect(() => {
-    getMe()
-      .then((res) => setUser(res.data))
-      .catch(() => setUser(undefined))
-      .finally(() => setIsLoading(false))
-  }, [])
-
-  if (isLoading) return <p className={styles.loading}>Loading…</p>
+  if (isPending) return <p className={styles.loading}>Loading…</p>
   if (!user)
     return <p className={styles.loading}>We couldn&apos;t load your account. Refresh to try again.</p>
 

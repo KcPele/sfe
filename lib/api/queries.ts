@@ -1,6 +1,7 @@
 import { keepPreviousData, QueryClient, queryOptions } from '@tanstack/react-query'
 import { ApiError } from './client'
-import { getTransaction, getTransactions, type TransactionQuery } from './endpoints'
+import type { Currency } from '@/types/api'
+import { getMe, getRate, getTransaction, getTransactions, type TransactionQuery } from './endpoints'
 
 /** 4xx responses won't change on retry; 5xx and network errors are often transient (API.md: ~3% fail). */
 export function shouldRetry(failureCount: number, error: unknown): boolean {
@@ -39,4 +40,16 @@ export const transactionQuery = (id: string) =>
   queryOptions({
     queryKey: transactionKeys.detail(id),
     queryFn: ({ signal }) => getTransaction(id, { signal }).then((res) => res.data),
+  })
+
+export const meQuery = () =>
+  queryOptions({
+    queryKey: ['me'] as const,
+    queryFn: ({ signal }) => getMe({ signal }).then((res) => res.data),
+  })
+
+export const rateQuery = (from: Currency, to: Currency) =>
+  queryOptions({
+    queryKey: ['rates', from, to] as const,
+    queryFn: ({ signal }) => getRate(from, to, { signal }).then((res) => res.data),
   })

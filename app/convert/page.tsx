@@ -1,9 +1,11 @@
 'use client'
-import { useEffect, useState } from 'react'
-import type { Conversion, Currency, Rate, User } from '@/types/api'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import type { Conversion, Currency } from '@/types/api'
 import { CURRENCIES } from '@/types/api'
 import { Button, Card, Input, Money, Select } from '@/components/ui'
-import { convert, getMe, getRate } from '@/lib/api/endpoints'
+import { convert } from '@/lib/api/endpoints'
+import { meQuery, rateQuery, transactionKeys } from '@/lib/api/queries'
 import { parseMoney } from '@/lib/format'
 import styles from './page.module.css'
 
@@ -17,20 +19,10 @@ export default function ConvertPage() {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const [user, setUser] = useState<User>()
-  const [rate, setRate] = useState<Rate>()
-
-  useEffect(() => {
-    getMe()
-      .then((res) => setUser(res.data))
-      .catch(() => setUser(undefined))
-  }, [])
-
-  useEffect(() => {
-    getRate(from, to)
-      .then((res) => setRate(res.data))
-      .catch(() => setRate(undefined))
-  }, [from, to])
+  const queryClient = useQueryClient()
+  const { data: user } = useQuery(meQuery())
+  // Keyed by pair, so a slow response for a previous pair can never overwrite the current one.
+  const { data: rate } = useQuery({ ...rateQuery(from, to), enabled: from !== to })
 
   const value = parseMoney(amount, from) ?? 0
   const fee = Math.round(value * 0.015)
@@ -46,6 +38,9 @@ export default function ConvertPage() {
       const res = await convert({ from, to, amount: value })
       setResult(res.data)
       setAmount('')
+      // Balances and history changed on the server.
+      void queryClient.invalidateQueries({ queryKey: meQuery().queryKey })
+      void queryClient.invalidateQueries({ queryKey: transactionKeys.all })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {

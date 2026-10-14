@@ -1,21 +1,15 @@
 'use client'
-import { useEffect, useState } from 'react'
-import type { Currency, Rate } from '@/types/api'
+import { useQueries } from '@tanstack/react-query'
+import type { Currency } from '@/types/api'
 import { Card, CardHeader } from '@/components/ui'
-import { getRate } from '@/lib/api/endpoints'
+import { rateQuery } from '@/lib/api/queries'
 import { formatTime } from '@/lib/format'
 import styles from './RatesWidget.module.css'
 
 const QUOTES: Currency[] = ['USD', 'GHS']
 
 export function RatesWidget({ base }: { base: Currency }) {
-  const [rates, setRates] = useState<Rate[]>()
-
-  useEffect(() => {
-    Promise.all(QUOTES.map((quote) => getRate(quote, base)))
-      .then((results) => setRates(results.map((res) => res.data)))
-      .catch(() => setRates(undefined))
-  }, [base])
+  const rates = useQueries({ queries: QUOTES.map((quote) => rateQuery(quote, base)) }).map((q) => q.data)
   const updatedAt = rates?.[0]?.updatedAt
 
   return (
