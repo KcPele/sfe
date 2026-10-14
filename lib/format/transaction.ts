@@ -15,3 +15,18 @@ export const TRANSACTION_STATUS_LABELS: Record<TransactionStatus, string> = {
   pending: 'Pending',
   failed: 'Failed',
 }
+
+const CREDIT_TYPES: readonly TransactionType[] = ['deposit', 'transfer_in', 'conversion']
+
+/** Money coming into the wallet. Conversions are recorded in the target currency, so they are credits. */
+export const isCredit = (type: TransactionType) => CREDIT_TYPES.includes(type)
+
+/** "Okonkwo-Adeyemi Logistics" -> "OA", "Ada Okafor" -> "AO". */
+export function initials(name: string): string {
+  return name
+    .split(/[\s-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0].toUpperCase())
+    .join('')
+}

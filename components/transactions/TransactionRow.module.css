@@ -21,17 +21,6 @@
   background: var(--color-bg-subtle);
 }
 
-.icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-full);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-}
-
 .main {
   min-width: 0;
 }
