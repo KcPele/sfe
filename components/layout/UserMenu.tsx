@@ -16,7 +16,9 @@ export function UserMenu() {
   const [user, setUser] = useState<User>()
 
   useEffect(() => {
-    getMe().then((res) => setUser(res.data))
+    getMe()
+      .then((res) => setUser(res.data))
+      .catch(() => setUser(undefined))
   }, [])
 
   return (
