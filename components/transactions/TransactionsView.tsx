@@ -102,7 +102,8 @@ export function TransactionsView() {
       <Card padding="none">
         {isPending ? (
           <TransactionTableSkeleton />
-        ) : error && !isPlaceholderData ? (
+        ) : error && !data ? (
+          // Only when there is nothing to show: a failed background refresh keeps the rows on screen.
           <StateMessage
             role="alert"
             icon="alert"
