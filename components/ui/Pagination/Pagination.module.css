@@ -1,0 +1,70 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  list-style: none;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.button:disabled {
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+}
+
+.step {
+  padding: 0 var(--space-3);
+  border-color: var(--color-border-strong);
+  background: var(--color-surface);
+}
+
+.step:not(:disabled):hover,
+.page:not(.current):hover {
+  background: var(--color-bg-subtle);
+}
+
+.page {
+  min-width: 36px;
+  padding: 0 var(--space-2);
+}
+
+.current {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.gap {
+  min-width: 24px;
+  text-align: center;
+  color: var(--color-text-subtle);
+}
+
+/* Phones: Previous / Next only, the summary text carries the position. */
+@media (max-width: 640px) {
+  .pagination {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .pages {
+    display: none;
+  }
+}
